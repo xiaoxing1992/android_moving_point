@@ -67,17 +67,17 @@ public class MainActivity extends Activity implements AMap.OnMapLoadedListener, 
     public void onMapLoaded() {
         addLocpath();
         initMoveMarker();
-        mPolyline = amap.addPolyline(new PolylineOptions().color(Color.YELLOW).width(15));
+        mPolyline = amap.addPolyline(new PolylineOptions().color(Color.BLUE).width(15));
     }
 
 
     //读取本地轨迹数据，添加轨迹标记点
     private void addLocpath() {
         mOriginList = TraceAsset.parseLocationsData(this.getAssets(),
-                "traceRecord" + File.separator + "356022065185856.csv");
+                "traceRecord" + File.separator + "AMapTrace2.csv");
 
         //初始化时间，每秒钟几个点
-        time = mOriginList.size()/5;
+        time = mOriginList.size()/10;
 
         if (mOriginList != null && mOriginList.size()>0) {
 //            mOriginPolyline = amap.addPolyline(new PolylineOptions().addAll(mOriginList).color(Color.GRAY));
@@ -89,12 +89,27 @@ public class MainActivity extends Activity implements AMap.OnMapLoadedListener, 
         /**
          * 地图上添加标记点
          */
-        for(int i = 0; i <mOriginList.size(); i++){
-            if (mPointIndex.contains(i)){
-                Marker marker = amap.addMarker(new MarkerOptions().position(mOriginList.get(i)));
-                marker.setObject(i);
-            }
-        }
+//        for(int i = 0; i <mOriginList.size(); i++){
+//            if (mPointIndex.contains(i)){
+//                Marker marker = amap.addMarker(new MarkerOptions().position(mOriginList.get(i)));
+//                marker.setObject(i);
+//            }
+//        }
+
+        // 起点Marker
+        Marker startMarker = amap.addMarker(new MarkerOptions()
+                .position(new LatLng(mOriginList.get(0).latitude, mOriginList.get(0).longitude))
+                .anchor(0.5f, 0.5f)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_point_circle_start)));
+        startMarker.setClickable(false);
+
+
+        // 终点Marker
+        Marker endMarker = amap.addMarker(new MarkerOptions()
+                .position(new LatLng(mOriginList.get(mOriginList.size() - 1).latitude, mOriginList.get(mOriginList.size() - 1).longitude))
+                .anchor(0.5f, 0.5f)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_point_circle_end)));
+        endMarker.setClickable(false);
     }
 
     /**
@@ -149,17 +164,17 @@ public class MainActivity extends Activity implements AMap.OnMapLoadedListener, 
                             for(Marker marker :markerList) {
                                 if (marker.getObject()!= null){
                                     int markerindex = (int)marker.getObject();
-                                    if (markerindex == index ){
-                                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                                        startJumpAnimation(marker);
-                                    }
+//                                    if (markerindex == index ){
+//                                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+//                                        startJumpAnimation(marker);
+//                                    }
                                 }
                             }
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+//                            try {
+//                                Thread.sleep(1000);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
 
                             moveMarker.startSmoothMove();
                         }
@@ -170,10 +185,10 @@ public class MainActivity extends Activity implements AMap.OnMapLoadedListener, 
                             //需要旋转地图的话，在此改变地图角度
 //                            amapAngle += 10;
                             CameraPosition cameraPosition = new CameraPosition(center, 18, 60, amapAngle);
-                            amap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),2200,null);
+                            amap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),1000,null);
                         }else if ((index%20)==10 ){
                             CameraPosition cameraPosition = new CameraPosition(center, 18, 60, amapAngle);
-                            amap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),2200,null);
+                            amap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),1000,null);
                         }
 
                         /**
